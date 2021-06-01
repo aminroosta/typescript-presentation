@@ -16,7 +16,231 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
+				<section data-markdown>
+					<textarea data-template>
+## Typescript Basics
+---
+```ts
+const myAge: number = 24;
+
+const hobbies: string[] = ['Programming', 'Cooking'];
+
+const numbers = [1, 3.22, 6, -1] // inferred as number[] 
+```
+---
+```ts
+function foo(s: string) {
+	return s;
+}
+
+foo({});      // Error
+foo("hello"); // Ok
+```
+The optional type annotation on the parameter `s` lets the TypeScript type checker do it's job.
+---
+```js
+function foo(s) {
+	return s;
+}
+```
+TypeScript erases all type information before emitting JavaScript.
+---
+#### Ambient Declarations
+```ts
+declare var document;
+document.title = "Hello"; // Ok because 
+						  // document has been declared
+```
+Introduces a variable into a TypeScript scope, but has zero impact on the emitted JavaScript program.
+---
+#### Function types
+```ts
+function vote(
+	candidate: string,
+	callback: (result: string) => void
+) {
+	// ...
+}
+vote("my-vote",
+	function(result: string) {
+		console.log(result);
+	}
+);
+```
+The second parameter to 'vote' has the function type 👇
+```ts
+(result: string) => void
+```
+---
+#### Object types
+Object type literal:
+```ts
+const p1 : { x: number; y: number; } = { x: 0, y: 0 };
+```
+
+give name to types:
+```ts
+interface Friend {
+	name: string;
+	favoriteColor?: string;
+}
+function add(friend: Friend) {
+	const name = friend.name;
+}
+
+add({ name: "Fred" }); // Ok
+add({ favoriteColor: "blue" }); // Error, name required
+add({ name: "Jill", favoriteColor: "green" }); // Ok
+```
+---
+#### Bare function signature
+```
+var f: {
+	(): string;
+};
+
+var sameType: () => string = f; // Ok
+
+var nope: () => number = sameType; // Error: type mismatch
+```
+---
+#### Structural Subtyping
+```ts
+interface Point {
+	x: number;
+	y: number;
+}
+function getX(p: Point) {
+	return p.x;
+}
+class CPoint {
+	x: number;
+	y: number;
+	constructor(x: number, this.x = x;) {
+		this.y = y;
+	}
+}
+
+getX(new CPoint(0, 0)); // Ok, fields match
+getX({ x: 0, y: 0, color: "red" }); // Extra fields Ok
+getX({ x: 0 }); // Error: supplied parameter does not match
+```
+---
+#### Contextual typing
+```ts
+function mul(a: number, b: number) {
+	return a * b;
+}
+```
+TypeScript infers `number` as the return type.
+```ts
+function mul(a: number, b: number) : number {
+	return a * b;
+}
+```
+TypeScript type inference can proceed "bottom-up".  
+From the leaves of an expression tree to its root.
+---
+#### Classes
+```ts
+class BankAccount {
+	balance = 0;
+	deposit(credit: number) {
+		this.balance += credit;
+		return this.balance;
+	}
+}
+```
+If we do target es3, the JS output would be
+```js
+var BankAccount = (function () {
+	function BankAccount() {
+		this.balance = 0;
+	}
+	BankAccount.prototype.deposit = function(credit) {
+		this.balance += credit;
+		return this.balance;
+	};
+	return BankAccount;
+})();
+```
+---
+```ts
+interface BankAccount {
+	balance: number;
+	deposit(credit: number): number;
+}
+
+var BankAccount: new() => BankAccount;
+```
+---
+### Inheritance
+
+```ts
+class CheckingAccount extends BankAccount {
+	constructor(balance: number) {
+		super(balance);
+	}
+	writeCheck(debit: number) {
+		this.balance -= debit;
+	}
+}
+```
+---
+#### Generics
+```ts
+interface Array<T> {
+	reverse(): T[];
+	sort(compareFn?: (a: T, b: T) => number): T[];
+	// ...
+}
+```
+Functions can also have generic parameters:
+```ts
+	map<U>(
+		func: (value: T, index: number, array: T[]) => U,
+		thisArg?: any
+	): U[];
+```
+---
+```ts
+interface NamedItem {
+	name: string;
+}
+```
+```ts
+class List<T extends NamedItem> {
+	next: List<T> = null;
+	constructor(public item: T) { }
+	insertAfter(item: T) {
+		var temp = this.next;
+		this.next = new List(item);
+		this.next.next = temp;
+	}
+	log() {
+		console.log(this.item.name);
+	}
+	// ...
+}
+```
+---
+#### 
+```ts
+```
+---
+#### 
+```ts
+```
+---
+#### 
+```ts
+```
+
+
+
+
+					  </textarea>
+				</section>
 				<section>Slide 2</section>
 			</div>
 		</div>
