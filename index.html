@@ -72,6 +72,25 @@ The second parameter to 'vote' has the function type 👇
 (result: string) => void
 ```
 ---
+```ts
+// from fs module
+interface AbortSignal { readonly aborted: boolean; }
+
+interface Abortable { signal?: AbortSignal; }
+```
+```ts
+function readFile(
+	path: PathLike | number,
+	options:
+		{ encoding?: null; flag?: string; } & Abortable |
+		undefined | null,
+	callback: (
+		err: NodeJS.ErrnoException | null,
+		data: Buffer
+	) => void,
+): void;
+```
+---
 #### Object types
 Object type literal:
 ```ts
@@ -103,6 +122,39 @@ var sameType: () => string = f; // Ok
 
 var nope: () => number = sameType; // Error: type mismatch
 ```
+#### Index access
+```ts
+const cache : {
+	[key: string]: string
+} = {};
+
+cache["my-key"] = "some-value";
+cache["other-key"] = 123; // Error: type mismatch
+```
+---
+```ts
+interface ArrayConstructor {
+    new(arrayLength?: number): any[];
+    new <T>(arrayLength: number): T[];
+    new <T>(...items: T[]): T[];
+    (arrayLength?: number): any[];
+    <T>(arrayLength: number): T[];
+    <T>(...items: T[]): T[];
+    isArray(arg: any): arg is any[];
+    readonly prototype: any[];
+}
+
+declare var Array: ArrayConstructor;
+```
+```ts
+const a0 = new Array<number>(3); // [undefined x 3]
+
+const a1 = new Array(1, 2, 3); // [1, 2, 3]
+
+const a2 = Array(1, 2, 3); // [1, 2, 3]
+
+const yes : boolean = Array.isArray(a0);
+```
 ---
 #### Structural Subtyping
 ```ts
@@ -120,7 +172,8 @@ class CPoint {
 		this.y = y;
 	}
 }
-
+```
+```ts
 getX(new CPoint(0, 0)); // Ok, fields match
 getX({ x: 0, y: 0, color: "red" }); // Extra fields Ok
 getX({ x: 0 }); // Error: supplied parameter does not match
@@ -132,14 +185,13 @@ function mul(a: number, b: number) {
 	return a * b;
 }
 ```
-TypeScript infers `number` as the return type.
+ 👇
 ```ts
 function mul(a: number, b: number) : number {
 	return a * b;
 }
 ```
-TypeScript type inference can proceed "bottom-up".  
-From the leaves of an expression tree to its root.
+Type inference proceeds "bottom-up", from the leaves of an expression tree to its root.
 ---
 #### Classes
 ```ts
