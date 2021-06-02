@@ -132,30 +132,6 @@ cache["my-key"] = "some-value";
 cache["other-key"] = 123; // Error: type mismatch
 ```
 ---
-```ts
-interface ArrayConstructor {
-    new(arrayLength?: number): any[];
-    new <T>(arrayLength: number): T[];
-    new <T>(...items: T[]): T[];
-    (arrayLength?: number): any[];
-    <T>(arrayLength: number): T[];
-    <T>(...items: T[]): T[];
-    isArray(arg: any): arg is any[];
-    readonly prototype: any[];
-}
-
-declare var Array: ArrayConstructor;
-```
-```ts
-const a0 = new Array<number>(3); // [undefined x 3]
-
-const a1 = new Array(1, 2, 3); // [1, 2, 3]
-
-const a2 = Array(1, 2, 3); // [1, 2, 3]
-
-const yes : boolean = Array.isArray(a0);
-```
----
 #### Structural Subtyping
 ```ts
 interface Point {
@@ -238,6 +214,13 @@ class CheckingAccount extends BankAccount {
 	}
 }
 ```
+```ts
+class Point {...}
+
+interface Colored {...}
+
+class Pixel extends Point implements Colored {...}
+```
 ---
 #### Generics
 ```ts
@@ -276,24 +259,54 @@ class List<T extends NamedItem> {
 }
 ```
 ---
-#### 
 ```ts
+interface ArrayConstructor {
+    new(arrayLength?: number): any[];
+    new <T>(arrayLength: number): T[];
+    new <T>(...items: T[]): T[];
+    (arrayLength?: number): any[];
+    <T>(arrayLength: number): T[];
+    <T>(...items: T[]): T[];
+    isArray(arg: any): arg is any[];
+    readonly prototype: any[];
+}
+
+declare var Array: ArrayConstructor;
+```
+```ts
+const a0 = new Array<number>(3); // [undefined x 3]
+
+const a1 = new Array(1, 2, 3); // [1, 2, 3]
+
+const a2 = Array(1, 2, 3); // [1, 2, 3]
+
+const yes : boolean = Array.isArray(a0);
 ```
 ---
-#### 
+#### utilities
 ```ts
+type Record<K extends keyof any, T> = {
+    [P in K]: T;
+};
+
+type Point<T> = { x: T, y: T, z: T };
+
+const a: Record<string, Point<number>> = {};
+
+a["key"] = { x: 3, y: 5, z: 2};
 ```
----
-#### 
 ```ts
+type Pick<T, K extends keyof T> = {
+    [P in K]: T[P];
+};
+
+type Point2D<T> = Pick<Point<T>, 'x' | 'y'>;
+
+const b : Point2D<number> = { x: 0, y: 0 };
 ```
-
-
-
 
 					  </textarea>
 				</section>
-				<section>Slide 2</section>
 			</div>
 		</div>
 
